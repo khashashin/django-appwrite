@@ -1,7 +1,7 @@
 # Appwrite Middleware for Django
 
-[![PyPI version](https://badge.fury.io/py/django-appwrite.svg)](https://badge.fury.io/py/django-appwrite)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/appwrite.svg)](https://pypi.org/project/appwrite/)
+![PyPI version](https://badge.fury.io/py/django-appwrite.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-appwrite)
 ![PyPI - License](https://img.shields.io/pypi/l/django-appwrite)
 
 A Django middleware to authenticate users with Appwrite.

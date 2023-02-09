@@ -1,5 +1,3 @@
-import random
-import string
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -8,11 +6,6 @@ from appwrite.services.users import Users
 from django.utils.deprecation import MiddlewareMixin
 
 User = get_user_model()
-
-
-def get_random_string(length):
-    characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(random.choice(characters) for i in range(length))
 
 
 class AppwriteMiddleware(MiddlewareMixin):
@@ -61,25 +54,20 @@ class AppwriteMiddleware(MiddlewareMixin):
 
         # If the user information was retrieved successfully
         if user_info:
+            email = user_info['email']
+            password = settings.SECRET_KEY+user_id
             # Get the Django user by its email
-            user = User.objects.filter(username=user_info['email']).first()
-
-            # Generate a random password for the user
-            password = get_random_string(16)
+            user = User.objects.filter(username=email).first()
 
             # If the user doesn't exist, create it
             if not user:
                 user = User.objects.create_user(
-                    username=user_info['email'],
+                    username=email,
                     password=password,
-                    email=user_info['email'])
-
-            # Set the user's password to the random password and save it
-            user.set_password(password)
-            user.save()
+                    email=email)
 
             # Authenticate the user using the email as the username
-            user = authenticate(request, username=user_info['email'], password=password)
+            user = authenticate(request, username=email, password=password)
 
             # If the authentication was successful, log the user in
             if user:

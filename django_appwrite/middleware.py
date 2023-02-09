@@ -18,6 +18,8 @@ class AppwriteMiddleware(MiddlewareMixin):
             project_id = settings.APPWRITE.get('PROJECT_ID')
             project_key = settings.APPWRITE.get('PROJECT_API_KEY')
             self.user_id_header = settings.APPWRITE.get('USER_ID_HEADER', 'HTTP_USER_ID')
+            self.verify_email = settings.APPWRITE.get('VERIFY_EMAIL', False)
+            self.verify_phone = settings.APPWRITE.get('VERIFY_PHONE', False)
         except AttributeError:
             raise Exception("""
                 Make sure you have the following settings in your Django settings file:
@@ -54,6 +56,15 @@ class AppwriteMiddleware(MiddlewareMixin):
 
         # If the user information was retrieved successfully
         if user_info:
+
+            # If the user has not verified their email, return the response without doing anything
+            if self.verify_email and not user_info['emailVerification']:
+                return self.get_response(request)
+
+            # If the user has not verified their phone, return the response without doing anything
+            if self.verify_phone and not user_info['phoneVerification']:
+                return self.get_response(request)
+
             email = user_info['email']
             password = settings.SECRET_KEY+user_id
             # Get the Django user by its email

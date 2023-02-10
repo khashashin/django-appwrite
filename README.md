@@ -41,15 +41,16 @@ APPWRITE = {
     'PROJECT_ENDPOINT': 'https://example.com/v1',
     'PROJECT_ID': 'PROJECT_ID',
     'PROJECT_API_KEY': 'PROJECT_API_KEY',
-    'USER_ID_HEADER': 'USER_ID',
 }
 ```
-| Setting            | Default                                                         | Description                                                                                                |
-|--------------------|-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| `PROJECT_ENDPOINT` |                                                                 | The endpoint of your Appwrite project. You can find this in the Appwrite console under Settings > General. |
-| `PROJECT_ID`       |                                                                 | The ID of your Appwrite project. You can find this in the Appwrite console under Settings > General.       |
-| `PROJECT_API_KEY`  |                                                                 | The API key of your Appwrite project. You can find this in the Appwrite console under Settings > API Keys. |
-| `USER_ID_HEADER`   | HTTP_USER_ID | The header name that will be used to store the user ID.                                                    |
+| Setting            | Default      | Description                                                                                                                                                                                                           |
+|--------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `PROJECT_ENDPOINT` |              | The endpoint of your Appwrite project. You can find this in the Appwrite console under Settings > General.                                                                                                            |
+| `PROJECT_ID`       |              | The ID of your Appwrite project. You can find this in the Appwrite console under Settings > General.                                                                                                                  |
+| `PROJECT_API_KEY`  |              | The API key of your Appwrite project. You can find this in the Appwrite console under Settings > API Keys.                                                                                                            |
+| `USER_ID_HEADER`   | HTTP_USER_ID | The header name that will be used to store the user ID.                                                                                                                                                               |
+| `VERIFY_EMAIL`     | False        | If set to `True`, the middleware will check if the user's email address has been verified in Appwrite before authenticating the user. If the email address has not been verified, the user will not be authenticated. |
+| `VERIFY_PHONE`     | False        | If set to `True`, the middleware will check if the user's phone number has been verified in Appwrite before authenticating the user. If the phone number has not been verified, the user will not be authenticated.   |
 
 ## How it works
 This middleware class will get the user ID from the header specified in the `USER_ID_HEADER` setting.

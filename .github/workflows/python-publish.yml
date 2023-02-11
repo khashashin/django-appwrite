@@ -37,6 +37,6 @@ jobs:
       - name: Build package
         run: python setup.py sdist
       - name: Publish package
-        run: twine upload ./dist/django-appwrite-${{ github.ref }}
+        run: twine upload ./dist/django-appwrite-${{ github.ref_name }}.tar.gz
         env:
             TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}

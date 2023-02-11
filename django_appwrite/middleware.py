@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from appwrite.client import Client
-from appwrite.services.users import Users
+from appwrite.services.account import Account
 from django.utils.deprecation import MiddlewareMixin
 
 User = get_user_model()
@@ -17,6 +17,7 @@ class AppwriteMiddleware(MiddlewareMixin):
             project_endpoint = settings.APPWRITE.get('PROJECT_ENDPOINT')
             project_id = settings.APPWRITE.get('PROJECT_ID')
             project_key = settings.APPWRITE.get('PROJECT_API_KEY')
+            self.auth_header = settings.APPWRITE.get('AUTH_HEADER', 'HTTP_AUTHORIZATION')
             self.user_id_header = settings.APPWRITE.get('USER_ID_HEADER', 'HTTP_USER_ID')
             self.verify_email = settings.APPWRITE.get('VERIFY_EMAIL', False)
             self.verify_phone = settings.APPWRITE.get('VERIFY_PHONE', False)
@@ -37,19 +38,22 @@ class AppwriteMiddleware(MiddlewareMixin):
                        .set_project(project_id)
                        .set_key(project_key))
 
-        # Initialize Appwrite Users service
-        self.users = Users(self.client)
-
     def __call__(self, request, *args, **kwargs):
-        # Get the user ID from the header
-        user_id = request.META.get(self.user_id_header, '')
+        try:
+            # Get the user ID from the header
+            user_id = request.META.get(self.user_id_header, '')
+            auth_header = request.META.get(self.auth_header, '')
+            jwt = auth_header.replace('Bearer ', '')
+        except Exception as e:
+            return self.get_response(request)
 
         user_info = None
         # If the user ID header is present
-        if user_id:
+        if user_id and jwt:
             try:
                 # Get the user information from Appwrite
-                user_info = self.users.get(user_id)
+                self.client.set_jwt(jwt)
+                user_info = Account(self.client).get()
             except Exception as e:
                 # Return the response without doing anything
                 return self.get_response(request)
@@ -83,6 +87,7 @@ class AppwriteMiddleware(MiddlewareMixin):
             # If the authentication was successful, log the user in
             if user:
                 request.user = user
+                login(request, user)
 
         # Call the next middleware/view in the pipeline
         response = self.get_response(request)

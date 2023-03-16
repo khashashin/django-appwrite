@@ -45,6 +45,8 @@ class AppwriteMiddleware(MiddlewareMixin):
             auth_header = request.META.get(self.auth_header, '')
             jwt = auth_header.replace('Bearer ', '')
         except Exception as e:
+            if settings.DEBUG:
+                print('Error: ', e)
             return self.get_response(request)
 
         user_info = None
@@ -55,6 +57,8 @@ class AppwriteMiddleware(MiddlewareMixin):
                 self.client.set_jwt(jwt)
                 user_info = Account(self.client).get()
             except Exception as e:
+                if settings.DEBUG:
+                    print('Error: ', e)
                 # Return the response without doing anything
                 return self.get_response(request)
 

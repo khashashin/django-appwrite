@@ -51,6 +51,7 @@ APPWRITE = {
 | `AUTH_HEADER`      | HTTP_AUTHORIZATION | The header name that will be used to get the JWT from the authorization header. The value of this header should be `Bearer [JWT]`                                                                                     |
 | `VERIFY_EMAIL`     | False              | If set to `True`, the middleware will check if the user's email address has been verified in Appwrite before authenticating the user. If the email address has not been verified, the user will not be authenticated. |
 | `VERIFY_PHONE`     | False              | If set to `True`, the middleware will check if the user's phone number has been verified in Appwrite before authenticating the user. If the phone number has not been verified, the user will not be authenticated.   |
+| `PREFIX_EMAIL`     |                    | The prefix to use for the email address when checking if the user's email address has been verified. This is useful if you are integrating django_appwrite to existing projects that already have users.              |
 
 ## How it works
 This middleware class will authorize the user by checking the JWT in the `Authorization` header. The JWT is obtained from the `Authorization` header and is then sent to the Appwrite API to verify the JWT. If the JWT is valid, the user will be authenticated.

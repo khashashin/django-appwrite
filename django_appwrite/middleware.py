@@ -27,6 +27,7 @@ class AppwriteMiddleware(MiddlewareMixin):
             self.auth_header = settings.APPWRITE.get('AUTH_HEADER', 'HTTP_AUTHORIZATION')
             self.verify_email = settings.APPWRITE.get('VERIFY_EMAIL', False)
             self.verify_phone = settings.APPWRITE.get('VERIFY_PHONE', False)
+            self.prefix_email = settings.APPWRITE.get('PREFIX_EMAIL', '')
         except AttributeError:
             raise Exception("""
                 Make sure you have the following settings in your Django settings file:
@@ -81,14 +82,14 @@ class AppwriteMiddleware(MiddlewareMixin):
             if self.verify_phone and not user_info['phoneVerification']:
                 return self.get_response(request)
 
-            email = user_info['email']
+            email = self.prefix_email + user_info['email']
             password = settings.SECRET_KEY + user_info['$id']
             # Get the Django user by its email
             user = User.objects.filter(username=email).first()
 
             # If the user doesn't exist, create it
             if not user:
-                user = User.objects.create_user(
+                User.objects.create_user(
                     username=email,
                     password=password,
                     email=email)

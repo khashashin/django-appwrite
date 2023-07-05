@@ -14,7 +14,7 @@ setup(
     package_dir={'django_appwrite': 'django_appwrite'},
     install_requires=['appwrite', 'django'],
     license='MIT',
-    author='Yusup Khasbulatov',
+    author='Yusuf Khasbulatov',
     readme='README.md',
     keywords="appwrite auth django",
     url='https://github.com/khashashin/django-appwrite',

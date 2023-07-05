@@ -10,6 +10,7 @@ User = get_user_model()
 
 class AppwriteMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
+        super().__init__(get_response)
         self.get_response = get_response
 
         # Try to retrieve the required Appwrite settings from the Django settings file

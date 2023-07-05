@@ -49,14 +49,11 @@ APPWRITE = {
 | `PROJECT_ID`       |                    | The ID of your Appwrite project. You can find this in the Appwrite console under Settings > General.                                                                                                                  |
 | `PROJECT_API_KEY`  |                    | The API key of your Appwrite project. You can find this in the Appwrite console under Settings > API Keys.                                                                                                            |
 | `AUTH_HEADER`      | HTTP_AUTHORIZATION | The header name that will be used to get the JWT from the authorization header. The value of this header should be `Bearer [JWT]`                                                                                     |
-| `USER_ID_HEADER`   | HTTP_USER_ID       | The header name that will be used to store the user ID.                                                                                                                                                               |
 | `VERIFY_EMAIL`     | False              | If set to `True`, the middleware will check if the user's email address has been verified in Appwrite before authenticating the user. If the email address has not been verified, the user will not be authenticated. |
 | `VERIFY_PHONE`     | False              | If set to `True`, the middleware will check if the user's phone number has been verified in Appwrite before authenticating the user. If the phone number has not been verified, the user will not be authenticated.   |
 
 ## How it works
-This middleware class will get the user ID from the header specified in the `USER_ID_HEADER` setting.
-It will then use this user ID to retrieve the user information from Appwrite using the `Users` service.
-If a user is found, it will create a Django user if it doesn't exist, and authenticate the user.
+This middleware class will authorize the user by checking the JWT in the `Authorization` header. The JWT is obtained from the `Authorization` header and is then sent to the Appwrite API to verify the JWT. If the JWT is valid, the user will be authenticated.
 
 Please note that this middleware is intended to be used in conjunction with the Appwrite client-side SDK to authorize users on the frontend, and does not provide any APIs for user authentication on its own.
 
@@ -64,7 +61,7 @@ Please note that this middleware is intended to be used in conjunction with the 
 This is an example of how you can configure your frontend to use this middleware. Note that this example uses the [axios](https://axios-http.com/) library.
 
 ```javascript
-// axios interceptor to add the user ID to the request header
+// axios interceptor to add jwt to the request header
 import axios from 'axios';
 import { Client, Account } from 'appwrite';
 
@@ -76,13 +73,12 @@ const client = new Client()
 const account = new Account(client);
 
 axios.interceptors.request.use(async (config) => {
-    // get the user_id and jwt from your auth service/provider
-    const { user_id, jwt } = await yourAuthService();
+    // get jwt from your auth service/provider
+    const { jwt } = await yourAuthService();
     
     config.headers = {
         ...config.headers,
-        Authorization: `Bearer ${jwt}`,
-        'User-ID': user_id,
+        Authorization: `Bearer ${jwt}`
     }
     
     return config;

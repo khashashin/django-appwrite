@@ -18,7 +18,6 @@ class AppwriteMiddleware(MiddlewareMixin):
             project_id = settings.APPWRITE.get('PROJECT_ID')
             project_key = settings.APPWRITE.get('PROJECT_API_KEY')
             self.auth_header = settings.APPWRITE.get('AUTH_HEADER', 'HTTP_AUTHORIZATION')
-            self.user_id_header = settings.APPWRITE.get('USER_ID_HEADER', 'HTTP_USER_ID')
             self.verify_email = settings.APPWRITE.get('VERIFY_EMAIL', False)
             self.verify_phone = settings.APPWRITE.get('VERIFY_PHONE', False)
         except AttributeError:
@@ -28,7 +27,6 @@ class AppwriteMiddleware(MiddlewareMixin):
                     'PROJECT_ENDPOINT': 'https://example.com/v1',
                     'PROJECT_ID': 'PROJECT_ID',
                     'PROJECT_API_KEY': 'PROJECT_API_KEY',
-                    'USER_ID_HEADER': '[USER_ID]',
                 }
             """)
 
@@ -40,8 +38,7 @@ class AppwriteMiddleware(MiddlewareMixin):
 
     def __call__(self, request, *args, **kwargs):
         try:
-            # Get the user ID from the header
-            user_id = request.META.get(self.user_id_header, '')
+            # Get the jwt from the header
             auth_header = request.META.get(self.auth_header, '')
             jwt = auth_header.replace('Bearer ', '')
         except Exception as e:
@@ -50,8 +47,8 @@ class AppwriteMiddleware(MiddlewareMixin):
             return self.get_response(request)
 
         user_info = None
-        # If the user ID header is present
-        if user_id and jwt:
+        # If the jwt header is present
+        if jwt:
             try:
                 # Get the user information from Appwrite
                 self.client.set_jwt(jwt)
@@ -74,7 +71,7 @@ class AppwriteMiddleware(MiddlewareMixin):
                 return self.get_response(request)
 
             email = user_info['email']
-            password = settings.SECRET_KEY+user_id
+            password = settings.SECRET_KEY + user_info['$id']
             # Get the Django user by its email
             user = User.objects.filter(username=email).first()
 

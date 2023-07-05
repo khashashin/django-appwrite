@@ -8,6 +8,12 @@ from django.utils.deprecation import MiddlewareMixin
 User = get_user_model()
 
 
+def log_error(e):
+    import logging
+    logger = logging.getLogger('django')
+    logger.error('Error: ', e)
+
+
 class AppwriteMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
         super().__init__(get_response)
@@ -32,10 +38,14 @@ class AppwriteMiddleware(MiddlewareMixin):
             """)
 
         # Initialize Appwrite client
-        self.client = (Client()
-                       .set_endpoint(project_endpoint)
-                       .set_project(project_id)
-                       .set_key(project_key))
+        try:
+            self.client = (Client()
+                           .set_endpoint(project_endpoint)
+                           .set_project(project_id)
+                           .set_key(project_key))
+        except Exception as e:
+            if settings.DEBUG:
+                log_error(e)
 
     def __call__(self, request, *args, **kwargs):
         try:
@@ -44,7 +54,7 @@ class AppwriteMiddleware(MiddlewareMixin):
             jwt = auth_header.replace('Bearer ', '')
         except Exception as e:
             if settings.DEBUG:
-                print('Error: ', e)
+                log_error(e)
             return self.get_response(request)
 
         user_info = None
@@ -56,7 +66,7 @@ class AppwriteMiddleware(MiddlewareMixin):
                 user_info = Account(self.client).get()
             except Exception as e:
                 if settings.DEBUG:
-                    print('Error: ', e)
+                    log_error(e)
                 # Return the response without doing anything
                 return self.get_response(request)
 

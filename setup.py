@@ -12,7 +12,7 @@ setup(
     long_description_content_type='text/markdown',
     packages=find_packages(exclude=("tests",)),
     package_dir={'django_appwrite': 'django_appwrite'},
-    install_requires=['appwrite', 'django'],
+    install_requires=['appwrite', 'django', 'djangorestframework'],
     license='MIT',
     author='Yusuf Khasbulatov',
     readme='README.md',

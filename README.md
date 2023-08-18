@@ -3,6 +3,7 @@
 ![PyPI version](https://badge.fury.io/py/django-appwrite.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-appwrite)
 ![PyPI - License](https://img.shields.io/pypi/l/django-appwrite)
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/khashashin)
 
 A Django package to authenticate users with Appwrite using middleware and/or Django Rest Framework (DRF) authentication classes.
 

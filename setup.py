@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='django-appwrite',
-    version='1.5.1',
+    version='1.5.2',
     description='Django Middleware to authenticate users with Appwrite',
     long_description=long_description,
     long_description_content_type='text/markdown',

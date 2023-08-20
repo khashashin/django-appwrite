@@ -34,13 +34,15 @@ class AppwriteAuthentication(BaseAuthentication):
         email = appwrite_settings['prefix_email'] + user_info['email']
         password = settings.SECRET_KEY + user_info['$id']
 
+        username_field = getattr(User, 'USERNAME_FIELD', 'username')
+
         # Get or create a corresponding Django user
-        django_user = User.objects.filter(username=email).first()
+        django_user = User.objects.filter(**{username_field: email}).first()
         if not django_user:
-            User.objects.create_user(username=email, password=password, email=email)
+            User.objects.create_user(**{username_field: email, 'password': password})
 
         # Ensure the user can be authenticated with Django's system
-        auth_user = authenticate(request, username=email, password=password)
+        auth_user = authenticate(request, **{username_field: email, 'password': password})
         if not auth_user:
             raise AuthenticationFailed('The user could not be authenticated with Django.')
 

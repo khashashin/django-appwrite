@@ -69,18 +69,18 @@ class AppwriteMiddleware(MiddlewareMixin):
 
                 email = self.prefix_email + user_info['email']
                 password = settings.SECRET_KEY + user_info['$id']
+
+                username_field = getattr(User, 'USERNAME_FIELD', 'username')
+
                 # Get the Django user by its email
-                user = User.objects.filter(username=email).first()
+                user = User.objects.filter(**{username_field: email}).first()
 
                 # If the user doesn't exist, create it
                 if not user:
-                    User.objects.create_user(
-                        username=email,
-                        password=password,
-                        email=email)
+                    User.objects.create_user(**{username_field: email, 'password': password})
 
                 # Authenticate the user using the email as the username
-                user = authenticate(request, username=email, password=password)
+                user = authenticate(request, **{username_field: email, 'password': password})
 
                 # If the authentication was successful, log the user in
                 if user:

@@ -44,7 +44,7 @@ def initialize_appwrite_client():
 def log_error(e):
     import logging
     logger = logging.getLogger('django')
-    logger.error('Error: ', e)
+    logger.error('Error: %s', e)
 
 
 def check_verification(user_info, appwrite_settings):

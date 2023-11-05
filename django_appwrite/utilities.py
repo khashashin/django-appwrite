@@ -16,6 +16,12 @@ def get_appwrite_settings():
         verify_phone = settings.APPWRITE.get('VERIFY_PHONE', False)
         prefix_email = settings.APPWRITE.get('PREFIX_EMAIL', '')
 
+        # Deprecation warning if PROJECT_API_KEY is used, it is removed in 1.5.3, no alternative needed
+        project_api_key = settings.APPWRITE.get('PROJECT_API_KEY')
+        if project_api_key:
+            import warnings
+            warnings.warn('PROJECT_API_KEY is deprecated. From version 1.5.3 it will be removed. ', DeprecationWarning)
+
         return {
             'project_endpoint': project_endpoint,
             'project_id': project_id,
